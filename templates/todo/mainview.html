@@ -1,0 +1,23 @@
+
+
+
+<form action="{% url 'todo:mainview' %}" method="post">
+    {% csrf_token %}
+    {{ projectform }}
+    <input type="submit" value="Submit" name='newproject' />
+</form>
+
+<form action="{% url 'todo:mainview'  %}" method="post">
+    {% csrf_token %}
+    {{ taskform }}
+    <input type="submit" value="Submit" name='newtask'/>
+</form>
+
+{% for project in project_list %}
+<h1>{{project}}</h1>
+
+  {% for task in project.tasks.all %}
+  <p> {{task}} <p>
+
+  {% endfor %}
+{% endfor %}
