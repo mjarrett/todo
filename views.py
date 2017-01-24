@@ -40,6 +40,6 @@ def mainview(request):
     project_list = [ p for p in Project.objects.all() if p.groups in request.user.groups.all() ]
     print(project_list)
 
-    context = {'project_list':project_list, 'projectform':ProjectForm(), 'taskform':TaskForm()}
+    context = {'project_list':project_list, 'projectform':ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}), 'taskform':TaskForm()}
 
     return render(request, 'todo/mainview.html',context)
