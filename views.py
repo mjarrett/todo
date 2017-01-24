@@ -28,6 +28,8 @@ def create_new_task(project, task_name):
 @login_required
 def mainview(request):
 
+    lastproject = None
+
     if request.method == 'POST':
         if 'newproject' in request.POST:
             form = ProjectForm(request.POST)
@@ -35,11 +37,16 @@ def mainview(request):
         elif 'newtask' in request.POST:
             form = TaskForm(request.POST)
             form.save()
-
+            lastproject = request.POST['project']
+    
+        
 
     project_list = [ p for p in Project.objects.all() if p.groups in request.user.groups.all() ]
     print(project_list)
 
-    context = {'project_list':project_list, 'projectform':ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}), 'taskform':TaskForm()}
+    context = {'project_list':project_list, 
+               'projectform':ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}), 
+               'taskform':TaskForm(initial={'project':lastproject})
+    }
 
     return render(request, 'todo/mainview.html',context)
