@@ -1,6 +1,9 @@
+{% extends "base.html" %}
 
+{% block content %}
 
-
+<table>
+<tr>
 <form action="{% url 'todo:mainview' %}" method="post">
     {% csrf_token %}
     {{ projectform }}
@@ -13,6 +16,7 @@
     <input type="submit" value="Submit" name='newtask'/>
 </form>
 
+</table>
 {% for project in project_list %}
 <h1>{{project}}</h1>
 
@@ -21,3 +25,5 @@
 
   {% endfor %}
 {% endfor %}
+
+{% endblock %}
