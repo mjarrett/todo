@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% include "header.html" %}
 
 
 <form action="{% url 'todo:mainview' %}" method="post">
@@ -11,6 +12,7 @@
 </form>
 
 
+
 <form action="{% url 'todo:mainview'  %}" method="post">
     {% csrf_token %}
     {{ taskform }}
@@ -18,13 +20,18 @@
 </form>
 
 
+
 {% for project in project_list %}
 <h1>{{project}}</h1>
-
+  <a href="{% url 'todo:project' project.id %}">Details</a>
   {% for task in project.tasks.all %}
-  <p> {{task}} <p>
-
+  {% if not task.iscomplete %}
+  <p> {{task}} </p>
+  {% endif %}
   {% endfor %}
+
+
+
 {% endfor %}
 
 {% endblock %}
