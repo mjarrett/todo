@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "header.html" %}
+
+
+<form action="{% url 'todo:project' project.id %}" method="post">
+    {% csrf_token %}
+    {{ taskform }}
+    <input type="submit" value="Submit" name='newtask'/>
+</form>
+
+
+{% if project %}
+<h1>{{project}}</h1>
+<div><a style="color:red" href="{% url 'todo:removeproj' project.id %}">(Remove project)</a></div>
+
+  {% for task in project.tasks.all %}
+  {% if not task.iscomplete %}
+  <h3> {{task}} </h3>
+    <p> {{task.description}} </p>
+    <a href="">Edit</a>
+    <a href="{% url 'todo:complete' task.id %}">Mark as complete</a>
+  {% endif %}
+  {% endfor %}
+
+  <div style="color:grey">
+  {% for task in project.tasks.all %}
+  {% if  task.iscomplete %}
+  <h3> {{task}} </h3>
+    <p> {{task.description}} </p>
+    <p>Complete: {{task.date_complete}}</p>
+    <a href="{% url 'todo:complete' task.id %}">Mark as incomplete</a>
+  {% endif %}
+  {% endfor %}
+</div>
+
+{% endif %}
+
+{% endblock %}

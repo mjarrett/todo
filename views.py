@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from todo.models import Project, Task, Tag, ProjectForm, TaskForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 
 # Helper functions
@@ -23,30 +24,64 @@ def create_new_project(project_name,user):
 def create_new_task(project, task_name):
     t = Task(task_name='find new lesions', project=p, description='ID new lesions on SWI and see if they show up on hyperintense on FLAIR', user=user,priority=5)
 
+
+def process_proj_task_forms(request):
+    if 'newproject' in request.POST:
+        form = ProjectForm(request.POST)
+        form.save()
+        lastproject = Project.objects.get(project_name=request.POST['project_name'])
+    elif 'newtask' in request.POST:
+        form = TaskForm(request.POST)
+        form.save()
+        lastproject = request.POST['project']
+    return lastproject
+
 # Create your views here.
 
 @login_required
 def mainview(request):
 
     lastproject = None
-
     if request.method == 'POST':
-        if 'newproject' in request.POST:
-            form = ProjectForm(request.POST)
-            form.save()
-        elif 'newtask' in request.POST:
-            form = TaskForm(request.POST)
-            form.save()
-            lastproject = request.POST['project']
-    
-        
+        lastproject = process_proj_task_forms(request)
 
-    project_list = [ p for p in Project.objects.all() if p.groups in request.user.groups.all() ]
-    print(project_list)
 
-    context = {'project_list':project_list, 
-               'projectform':ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}), 
+    project_list = [ p for p in Project.objects.all() if p.groups in request.user.groups.all() and p.isactive == True]
+    print(lastproject)
+
+    context = {'project_list':project_list,
+               'projectform':ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}),
                'taskform':TaskForm(initial={'project':lastproject})
-    }
+               }
 
     return render(request, 'todo/mainview.html',context)
+
+@login_required
+def projectview(request,pk):
+
+    if request.method == 'POST':
+        process_proj_task_forms(request)
+
+    proj = Project.objects.get(id=pk)
+    context = {'project':proj, 'taskform':TaskForm(initial={'project':proj}) }
+    return render(request,'todo/project.html',context)
+
+@login_required
+def completetask(request,pk):
+    task = Task.objects.get(id=pk)
+    pid = task.project.id
+
+    #Flip whether task is or is not complete
+    task.iscomplete = not task.iscomplete
+    task.date_complete = timezone.now()
+    task.save()
+    return redirect('/todo/project/{}'.format(pid))
+
+
+@login_required
+def removeproj(request,pk):
+    proj = Project.objects.get(id=pk)
+
+    proj.isactive = not proj.isactive
+    proj.save()
+    return redirect('/todo/')

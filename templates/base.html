@@ -6,8 +6,8 @@
     <link rel="stylesheet" type="text/css" href="//mikejarrett.ca/css/style.css" />
 </head>
 <body>
-    <p>Logged in as: {{ request.user.username }} (<a href={% url 'lib:logout' %}>Logout</a>)  </p>
 
+    
     {% block content %}{% endblock %}
 </body>
 </html>

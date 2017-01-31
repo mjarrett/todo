@@ -10,8 +10,10 @@ from django.forms import ModelForm
 class Project(models.Model):
     project_name = models.CharField(max_length=200)
     groups = models.ForeignKey(Group, null=True, related_name='projects')
+    isactive = models.BooleanField(default=True)
     def __str__(self):
         return self.project_name
+
 
 class Tag(models.Model):
     tag_name = models.CharField(max_length=50)
@@ -26,6 +28,9 @@ class Task(models.Model):
     tag = models.ManyToManyField(Tag, related_name='tasks')
     priority = models.IntegerField(null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
+    iscomplete = models.BooleanField(default=False)
+    date_complete = models.DateTimeField(null=True)
+
     def __str__(self):
         return self.task_name
 
