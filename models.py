@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
-from django.forms import ModelForm
+from django import forms
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
@@ -26,7 +27,7 @@ class Task(models.Model):
     description = models.CharField(max_length=2000, null=True, blank=True)
     user = models.ForeignKey(User, null=True, related_name='tasks')
     tag = models.ManyToManyField(Tag, related_name='tasks')
-    priority = models.IntegerField(null=True, blank=True)
+    priority = models.IntegerField(default=1)
     date_created = models.DateTimeField(default=timezone.now)
     iscomplete = models.BooleanField(default=False)
     date_complete = models.DateTimeField(null=True)
@@ -36,12 +37,13 @@ class Task(models.Model):
 
 
 
-class ProjectForm(ModelForm):
+class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['project_name', 'groups']
 
-class TaskForm(ModelForm):
+class TaskForm(forms.ModelForm):
+    priority = forms.ChoiceField(choices=[(str(x),x) for x in range(1,11) ]  )
     class Meta:
         model = Task
         fields = ['task_name','project','description','priority']
