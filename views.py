@@ -49,8 +49,11 @@ def mainview(request):
     project_list = [ p for p in Project.objects.all() if p.groups in request.user.groups.all() and p.isactive == True]
     print(lastproject)
 
+    form = ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}   )
+    form.fields['groups'].queryset = request.user.groups.all()
+    
     context = {'project_list':project_list,
-               'projectform':ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}),
+               'projectform':form,
                'taskform':TaskForm(initial={'project':lastproject})
                }
 
