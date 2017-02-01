@@ -16,17 +16,18 @@
 <h1>{{project}}</h1>
 <div><a style="color:red" href="{% url 'todo:removeproj' project.id %}">(Remove project)</a></div>
 
-  {% for task in project.tasks.all %}
+  {% for task in project.tasks.all|dictsortreversed:"priority" %}
   {% if not task.iscomplete %}
   <h3> {{task}} </h3>
     <p> {{task.description}} </p>
+    <p>Priority: {{task.priority}}</p>
     <a href="">Edit</a>
     <a href="{% url 'todo:complete' task.id %}">Mark as complete</a>
   {% endif %}
   {% endfor %}
 
   <div style="color:grey">
-  {% for task in project.tasks.all %}
+  {% for task in project.tasks.all|dictsortreversed:"date_complete" %}
   {% if  task.iscomplete %}
   <h3> {{task}} </h3>
     <p> {{task.description}} </p>

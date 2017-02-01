@@ -24,7 +24,7 @@
 {% for project in project_list %}
 <h1>{{project}}</h1>
   <a href="{% url 'todo:project' project.id %}">Details</a>
-  {% for task in project.tasks.all %}
+  {% for task in project.tasks.all|dictsort:"priority" %}
   {% if not task.iscomplete %}
   <p> {{task}} </p>
   {% endif %}
