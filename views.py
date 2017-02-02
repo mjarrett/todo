@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from todo.models import Project, Task, Tag, ProjectForm, TaskForm
+from todo.models import Project, Task, Tag, ProjectForm, TaskForm, TaskEditForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -34,6 +34,11 @@ def process_proj_task_forms(request):
         form = TaskForm(request.POST)
         form.save()
         lastproject = request.POST['project']
+    elif 'edittasksub' in request.POST:
+        task = Task.objects.get(id=request.POST['tid'])
+        form = TaskForm(request.POST,instance=task)
+        form.save()
+        lastproject=request.POST['project']
     return lastproject
 
 # Create your views here.
@@ -57,13 +62,21 @@ def mainview(request):
     return render(request, 'todo/mainview.html',context)
 
 @login_required
-def projectview(request,pk):
+def projectview(request,pid,tid=None):
+    proj = Project.objects.get(id=pid)
+
+    if tid is not None:
+        task = Task.objects.get(id=tid)
+        taskeditform = TaskEditForm(instance=task,initial={'project':proj,'task':task})
+        tasktoedit = task.id
+    else:
+        taskeditform = None
+        tasktoedit = None
 
     if request.method == 'POST':
         process_proj_task_forms(request)
 
-    proj = Project.objects.get(id=pk)
-    context = {'project':proj, 'taskform':TaskForm(initial={'project':proj}) }
+    context = {'project':proj, 'taskform':TaskForm(initial={'project':proj}), 'taskeditform':taskeditform, 'tasktoedit':tasktoedit }
     return render(request,'todo/project.html',context)
 
 @login_required

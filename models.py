@@ -16,6 +16,7 @@ class Project(models.Model):
         return self.project_name
 
 
+
 class Tag(models.Model):
     tag_name = models.CharField(max_length=50)
     def __str__(self):
@@ -43,7 +44,12 @@ class ProjectForm(forms.ModelForm):
         fields = ['project_name', 'groups']
 
 class TaskForm(forms.ModelForm):
+
     priority = forms.ChoiceField(choices=[(str(x),x) for x in range(1,11) ]  )
+
     class Meta:
         model = Task
         fields = ['task_name','project','description','priority']
+
+class TaskEditForm(TaskForm):
+    description = forms.CharField(widget=forms.Textarea)

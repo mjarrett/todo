@@ -18,11 +18,27 @@
 
   {% for task in project.tasks.all|dictsortreversed:"priority" %}
   {% if not task.iscomplete %}
+
+  {% if task.id == tasktoedit %}
+  {{taskeditform.id}}
+  <form  action="{% url 'todo:project' project.id %}" method="post">
+    {% csrf_token %}
+    <h3> {{taskeditform.task_name}} </h3>
+    <input type="hidden" value={{task.id}} name='tid' />
+    <input type="submit" value="Update" name='edittasksub' />
+    <p>Priority: {{taskeditform.priority}}</p>
+    <p>Description: {{taskeditform.description}} </p>
+
+    <p>Project: {{taskeditform.project}} </p>
+  </form>
+  {% else %}
+
   <h3> {{task}} </h3>
     <p> {{task.description}} </p>
     <p>Priority: {{task.priority}}</p>
-    <a href="">Edit</a>
+    <a href="{% url 'todo:project' project.id %}edit/{{task.id}}">Edit</a>
     <a href="{% url 'todo:complete' task.id %}">Mark as complete</a>
+  {% endif %}
   {% endif %}
   {% endfor %}
 
