@@ -9,9 +9,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 class Project(models.Model):
+
     project_name = models.CharField(max_length=200)
     groups = models.ForeignKey(Group, null=True, related_name='projects')
     isactive = models.BooleanField(default=True)
+    rank = models.IntegerField(default=0)
+    
     def __str__(self):
         return self.project_name
 

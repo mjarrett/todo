@@ -25,6 +25,9 @@ def create_new_task(project, task_name):
     t = Task(task_name='find new lesions', project=p, description='ID new lesions on SWI and see if they show up on hyperintense on FLAIR', user=user,priority=5)
 
 
+
+
+
 def process_proj_task_forms(request):
     if 'newproject' in request.POST:
         form = ProjectForm(request.POST)
@@ -56,7 +59,7 @@ def mainview(request):
 
     form = ProjectForm(initial={'groups':Group.objects.get(name=request.user.username)}   )
     form.fields['groups'].queryset = request.user.groups.all()
-    
+
     context = {'project_list':project_list,
                'projectform':form,
                'taskform':TaskForm(initial={'project':lastproject})
