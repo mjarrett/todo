@@ -33,7 +33,8 @@ def generate_daily_email(user):
 
         if len(group.projects.all()) > 0:
 
-            for project in group.projects.all():
+            projects = sorted(group.projects.filter(isactive=True),key=lambda x: len(x.tasks.all()),reverse=True)
+            for project in projects:
                 html = "{}<br> <h2 style='color:green;'>{}</h2><ul>".format(html,project)
                 body = "{}\n Tasks for {}:\n\n".format(body,project)
 
@@ -44,5 +45,6 @@ def generate_daily_email(user):
 
                 html = "{} </ul>".format(html)
 
-
+    print(html)
+    print(body)
     return body, html
