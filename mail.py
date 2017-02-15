@@ -33,6 +33,9 @@ def generate_daily_email(user):
 
         if len(group.projects.all()) > 0:
 
+            html = "<h1><a href='http://apps.mikejarrett.ca/todo'>Go to your ToDo list</a></h1>"
+            body = "You todo list is at http://apps.mikejarrett.ca/todo \n\n"
+
             projects = sorted(group.projects.filter(isactive=True),key=lambda x: len(x.tasks.all()),reverse=True)
             for project in projects:
                 html = "{}<br> <h2 style='color:green;'>{}</h2><ul>".format(html,project)
