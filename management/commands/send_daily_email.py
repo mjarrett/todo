@@ -12,7 +12,9 @@ class Command(BaseCommand):
         user = User.objects.get(username='mike')
         body, html = generate_daily_email(user)
         try:
-            send_mail(user.email,'Your Tasks For {}',body,html,datetime.date.today().strftime("%B %d, %Y"))
+
+
+            send_mail(user.email,'Your Tasks For {}'.format(datetime.date.today().strftime("%B %d, %Y")),body,html)
             self.stdout.write("task email sent successfully")
         except:
             self.stdout.write("task email failed")
